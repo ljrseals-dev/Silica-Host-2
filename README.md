@@ -1,4 +1,4 @@
-# SilicaHost
+# SilicaHost 2
 
 A browser host for emulator cores, shipping one real core: **Silica, a 64-bit Arm (AArch64) interpreter compiled to a
 17 KB WebAssembly binary**. Load a bare-metal ELF built by clang, run it in a tab, watch registers/memory, set
