@@ -1,0 +1,2 @@
+SilicaHost bundles the Silica AArch64 functional core (core/), derived from the silica-allah-sim C++ project,
+which is MIT-licensed (see core/LICENSE). Modifications are listed in docs/CORE_CHANGES.md.

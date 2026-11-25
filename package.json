@@ -1,0 +1,27 @@
+{
+  "name": "silica-host",
+  "version": "1.0.0",
+  "description": "Browser host for emulator cores. Ships a WebAssembly AArch64 core (Silica) that runs real clang-built binaries.",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build:wasm": "bash core/wasm/build-wasm.sh build/silica-core.wasm",
+    "build:samples": "bash samples/build.sh",
+    "build": "npm run build:wasm && npm run build:samples && node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test:core": "make -C core test san",
+    "test": "npm run build && npm run typecheck && npm run test:core && node scripts/test.mjs && npm run test:e2e",
+    "test:e2e": "node tests/e2e/ui.e2e.mjs",
+    "serve": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.0",
+    "playwright": "^1.49.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

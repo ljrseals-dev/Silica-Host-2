@@ -1,0 +1,17 @@
+// Freestanding shim: minimal std::span<const T> (data/size/ctor from pointer+size).
+#pragma once
+#include <stddef.h>
+namespace std {
+template <class T> class span {
+ public:
+  constexpr span() noexcept = default;
+  constexpr span(T* p, size_t n) noexcept : p_(p), n_(n) {}
+  template <size_t N> constexpr span(T (&a)[N]) noexcept : p_(a), n_(N) {}
+  constexpr T* data() const noexcept { return p_; }
+  constexpr size_t size() const noexcept { return n_; }
+  constexpr T* begin() const noexcept { return p_; }
+  constexpr T* end() const noexcept { return p_ + n_; }
+ private:
+  T* p_ = nullptr; size_t n_ = 0;
+};
+}

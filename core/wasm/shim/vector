@@ -1,0 +1,24 @@
+// Freestanding shim: minimal zero-initialised std::vector<T> for trivially-copyable T.
+// Only what silica's FlatMemory needs (sized ctor, size, data). Backed by operator new,
+// which the wasm entry point implements with a memory.grow bump allocator.
+#pragma once
+#include <stddef.h>
+void* operator new(size_t n);
+void operator delete(void* p) noexcept;
+void operator delete(void* p, size_t) noexcept;
+namespace std {
+template <class T> class vector {
+ public:
+  explicit vector(size_t n) : n_(n), p_(static_cast<T*>(::operator new(n * sizeof(T)))) {
+    for (size_t i = 0; i < n; ++i) p_[i] = T{};
+  }
+  vector(const vector&) = delete;
+  vector& operator=(const vector&) = delete;
+  ~vector() { ::operator delete(p_); }
+  size_t size() const noexcept { return n_; }
+  T* data() noexcept { return p_; }
+  const T* data() const noexcept { return p_; }
+ private:
+  size_t n_; T* p_;
+};
+}

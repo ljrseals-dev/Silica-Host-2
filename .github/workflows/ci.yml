@@ -1,0 +1,23 @@
+name: ci
+on: { push: { branches: [main] }, pull_request: {} }
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - name: Toolchain (clang for wasm32 + aarch64, lld, g++ for sanitizers)
+        run: sudo apt-get update && sudo apt-get install -y clang lld llvm g++
+      - run: npm ci
+      - name: Core unit tests, native + ASan/UBSan
+        run: make -C core test san
+      - name: Build wasm core, samples (+ x86-64 oracle), bundle
+        run: npm run build
+      - run: npm run typecheck
+      - name: Unit, conformance and host tests
+        run: node scripts/test.mjs
+      - name: Browser end-to-end (file://)
+        run: npx playwright install --with-deps chromium && npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        with: { name: silica-host-dist, path: dist/ }

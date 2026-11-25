@@ -1,0 +1,9 @@
+// Freestanding shim: no libc headers exist for wasm32 here, so map to compiler builtins.
+// With -mbulk-memory the backend lowers these to memory.copy / memory.fill.
+#pragma once
+#include <stddef.h>
+namespace std {
+inline void* memcpy(void* d, const void* s, size_t n) { return __builtin_memcpy(d, s, n); }
+inline void* memmove(void* d, const void* s, size_t n) { return __builtin_memmove(d, s, n); }
+inline void* memset(void* d, int c, size_t n) { return __builtin_memset(d, c, n); }
+}
